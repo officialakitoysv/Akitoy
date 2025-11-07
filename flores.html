@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flores Eternas AKITOY</title>
+<link rel="stylesheet" href="typography.css">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --text:#1F2937;
+    --text-muted:#6B7280;
+    --primary:#0F3D91;
+    --primary-700:#0B3A7E;
+    /* compat */
+    --blue: var(--primary);
+    --blue-light: var(--primary-700);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background-color: var(--bg); color: var(--text); min-height:100vh; display:flex; flex-direction:column;}
+
+  header{
+    background: var(--primary-gradient, linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%));
+    padding:12px 24px;
+    min-height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+    border-bottom:2px solid var(--primary);
+  }
+  .logo{ display:flex; align-items:center; gap:8px; font-size:18px; font-weight:700; color:#fff; }
+  .logo img{width:40px;}
+  nav ul{ list-style:none; display:flex; gap:20px; }
+  nav a{ color:#fff; text-decoration:none; font-weight:600; position:relative; transition:0.3s; }
+  nav a::after{ content:""; position:absolute; left:0; bottom:-4px; width:0%; height:2px; background:#ffffff; transition: width 0.3s ease; }
+  nav a:hover::after{ width:100%; }
+  nav a:hover{color:#ffffff;}
+  nav a.cerrar{ color:#ffffff; }
+  nav a.cerrar:hover{ color:#ffffff; }
+
+  main{flex:1; padding:20px; max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:16px;}
+  h1{text-align:center; margin-bottom:12px; color: var(--primary);}
+  .productos{ display:grid; grid-template-columns: repeat(2,1fr); gap:16px; }
+  .producto{ background:#ffffff; border-radius:14px; padding:14px; box-shadow:0 4px 18px rgba(30,103,198,0.12); transition:0.3s; position:relative; border:1px solid rgba(30,103,198,0.15);}
+  .producto:hover{ transform: translateY(-4px); box-shadow:0 6px 24px rgba(30,103,198,0.25); }
+  .producto img{width:100%; height:150px; object-fit:cover; border-radius:10px; margin-bottom:8px;}
+  .producto h3{ margin-bottom:6px; color:var(--primary); }
+  .producto p{ margin-bottom:10px; color:var(--text-muted); }
+  .producto button{ background: var(--primary); color:#fff; padding:6px 10px; border:none; border-radius:8px; cursor:pointer; font-weight:700; transition:0.25s; }
+  .producto button:hover{ background: var(--primary-700); transform: scale(1.05); }
+
+  #carritoBtn{ position: fixed; bottom:20px; right:20px; background: var(--primary); color:#fff; padding:12px 18px; border:none; border-radius:50px; cursor:pointer; font-weight:700; box-shadow:0 4px 18px rgba(30,103,198,0.25); z-index:1000; transition:0.25s; }
+  #carritoBtn:hover{ background: var(--primary-700); transform: scale(1.05); }
+
+  #carritoPanel{ position: fixed; bottom:70px; right:20px; width:280px; max-height:400px; background: #ffffff; border-radius:14px; box-shadow:0 6px 24px rgba(30,103,198,0.18); padding:16px; overflow-y:auto; display:none; flex-direction:column; gap:8px; z-index:1000; border:1px solid rgba(30,103,198,0.15); }
+  #carritoPanel h3{ color: var(--primary); text-align:center; margin-bottom:8px; }
+  .itemCarrito{ display:flex; justify-content:space-between; align-items:center; background: rgba(0,0,0,0.03); padding:6px 10px; border-radius:8px; }
+  .itemCarrito button{ background:var(--primary); border:none; padding:2px 6px; border-radius:6px; cursor:pointer; transition:0.25s; }
+  .itemCarrito button:hover{ background: var(--primary-700); color:#fff; }
+
+  #totalCarrito{ font-weight:700; text-align:right; margin-top:6px; color:#111827; }
+  .accionesCarrito{ display:flex; justify-content:space-between; gap:8px; margin-top:10px; }
+  .accionesCarrito button{ flex:1; padding:8px; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:0.25s; }
+  .accionesCarrito .cancelar{ background:#e5e7eb; color:#111827; }
+  .accionesCarrito .cancelar:hover{ background:#d1d5db; }
+  .accionesCarrito .aceptar{ background:var(--primary); color:#fff; }
+  .accionesCarrito .aceptar:hover{ background:var(--primary-700); }
+  @media (max-width: 768px){
+    .productos{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="logo toy.jpg" alt="Logo">
+    <span>AKITOY</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="menuu.html">Inicio</a></li>
+      <li><a href="catotita.html">Emprendimientos</a></li>
+      <li><a href="contactos.html">Contacto</a></li>
+      <li><a href="#" class="cerrar" onclick="cerrarSesion()">Cerrar sesión</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <h1>Flores Eternas</h1>
+  <p style="text-align:center; color:var(--text-muted)">¡Las flores que duran para siempre, directo al corazón!</p>
+
+  <div class="productos">
+    <div class="producto">
+      <img src="rosi.jpg" alt="Rosas Eternas">
+      <h3>Rosas Eternas</h3>
+      <p>Precio: $10.00</p>
+      <button onclick="agregarAlCarrito('Rosas Eternas',10.00)">🛒 Añadir al carrito</button>
+    </div>
+
+    <div class="producto">
+      <img src="lila.jpg" alt="Lilas Eternas">
+      <h3>Lilas Eternas</h3>
+      <p>Precio: $20.00</p>
+      <button onclick="agregarAlCarrito('Lilas Eternas',20.00)">🛒 Añadir al carrito</button>
+    </div>
+
+    <div class="producto">
+      <img src="gira.jpg" alt="Orquídeas Eternas">
+      <h3>Girasol Eternas</h3>
+      <p>Precio: $15.00</p>
+      <button onclick="agregarAlCarrito('Orquídeas Eternas',15.00)">🛒 Añadir al carrito</button>
+    </div>
+
+    <div class="producto">
+      <img src="arre.jpg" alt="Arreglo Especial">
+      <h3>Arreglo Especial</h3>
+      <p>Precio: $30.00</p>
+      <button onclick="agregarAlCarrito('Arreglo Especial',30.00)">🛒 Añadir al carrito</button>
+    </div>
+
+    <div class="producto">
+      <img src="tulii.jpg" alt="Tulipanes Eternos">
+      <h3>Tulipanes Eternos</h3>
+      <p>Precio: $25.00</p>
+      <button onclick="agregarAlCarrito('Tulipanes Eternos',25.00)">🛒 Añadir al carrito</button>
+    </div>
+  </div>
+</main>
+
+<button id="carritoBtn" onclick="toggleCarrito()">Ver carrito (<span id="contadorCarrito">0</span>)</button>
+
+<div id="carritoPanel">
+  <h3>Tu carrito</h3>
+  <div id="itemsCarrito"></div>
+  <div id="totalCarrito">Monto a pagar: $0.00</div>
+
+  <div class="accionesCarrito">
+    <button class="cancelar" onclick="cancelarPedido()">Cancelar pedido</button>
+    <button class="aceptar" onclick="aceptarPedido()">Aceptar pedido</button>
+  </div>
+</div>
+
+<script>
+  let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+  actualizarCarrito();
+
+  function agregarAlCarrito(nombre, precio){
+    carrito.push({nombre, precio});
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+  }
+  function quitarDelCarrito(index){
+    carrito.splice(index,1);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+  }
+  function actualizarCarrito(){
+    const itemsDiv = document.getElementById('itemsCarrito');
+    const totalDiv = document.getElementById('totalCarrito');
+    const contadorSpan = document.getElementById('contadorCarrito');
+    itemsDiv.innerHTML = '';
+    let total = 0;
+    carrito.forEach((item, index)=>{
+      total += item.precio;
+      const div = document.createElement('div');
+      div.className = 'itemCarrito';
+      div.innerHTML = `<span>${item.nombre} - $${item.precio.toFixed(2)}</span>
+                       <button onclick="quitarDelCarrito(${index})">❌</button>`;
+      itemsDiv.appendChild(div);
+    });
+    totalDiv.innerText = `Monto a pagar: $${total.toFixed(2)}`;
+    contadorSpan.innerText = carrito.length;
+  }
+  function toggleCarrito(){
+    const panel = document.getElementById('carritoPanel');
+    panel.style.display = panel.style.display==='flex' ? 'none' : 'flex';
+  }
+  function cancelarPedido(){
+    carrito = [];
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+    alert("❌ Tu pedido ha sido cancelado.");
+  }
+  function aceptarPedido(){
+    if (carrito.length === 0) {
+      alert("⚠ No hay productos en el carrito para enviar un pedido.");
+      return;
+    }
+    let mensaje = "Hola, quiero realizar un pedido:\n\n";
+    let total = 0;
+    carrito.forEach(item => {
+      mensaje += `- ${item.nombre} $${item.precio.toFixed(2)}\n`;
+      total += item.precio;
+    });
+    mensaje += `\nMonto a pagar: $${total.toFixed(2)}\n\nUsuario: \n\nDui: `;
+    const numero = "50368328901";  
+    const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
+    carrito = [];
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+    alert("✅ Tu pedido ha sido enviado. En breves minutos te responderemos.");
+  }
+  function cerrarSesion(){
+    localStorage.clear();
+    window.location.href='index.html';
+  }
+</script>
+
+</body>
+</html>

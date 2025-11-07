@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrate en AKITOY como comprador</title>
+  <link rel="stylesheet" href="typography.css">
+  <style>
+/* Variables */
+:root{ --bg:#FFFFFF; --text:#1F2937; --primary:#0F3D91; --primary-700:#0B3A7E; --primary-gradient: linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%); }
+/* ===================== */
+/* Fondo general */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===================== */
+/* Encabezado */
+header {
+  width: 100%;
+  background: var(--primary-gradient, linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%));
+  border-bottom: 2px solid var(--primary);
+  box-shadow: 0 2px 8px rgba(30,103,198,0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+/* Contenedor interno del header */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Logo + título alineados */
+.logo-title {
+  display: flex;
+  align-items: center;
+}
+
+.logo-title img {
+  width: 40px;
+  margin-right: 12px;
+}
+
+.logo-title h1 {
+  font-size: 20px;
+  margin: 0;
+  color: #fff;
+}
+
+/* Botón Cerrar sesión */
+.logout-button {
+  background: transparent;
+  color: #fff;
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover,
+.logout-button:focus {
+  background: var(--primary-700);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(30,103,198,0.35);
+}
+
+/* ===================== */
+/* Contenedor del formulario */
+#registerFormEmprendedor {
+  width: 100%;
+  max-width: 500px;
+  margin-top: 140px; /* espacio para el header */
+  padding: 30px 25px;
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 18px rgba(30,103,198,0.12);
+  box-sizing: border-box;
+}
+
+/* Mensaje de confirmación */
+.confirm-message{
+  display:none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  background:#fff;
+  color: var(--text);
+  box-shadow: 0 4px 14px rgba(30,103,198,0.12);
+}
+
+/* Título del formulario */
+#registerFormEmprendedor h2 {
+  color: var(--primary);
+  margin-bottom: 20px;
+  font-weight: normal;
+  font-size: 1.4rem;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Campos del formulario */
+form label {
+  display: block;
+  margin-top: 16px;
+  font-weight: normal;
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+
+form input,
+form select,
+form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(30,103,198,0.35);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+form input[type="file"] {
+  padding: 5px;
+}
+
+/* Efectos al enfocar */
+form input:focus,
+form select:focus,
+form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30,103,198,0.25);
+}
+
+/* Botón de envío */
+form button {
+  width: 100%;
+  margin-top: 25px;
+  background: var(--primary);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: white;
+}
+
+form button:hover {
+  background: var(--primary-700);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(30,103,198,0.35);
+}
+
+/* Mensaje de error */
+.error {
+  color: var(--primary);
+  margin-top: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ===================== */
+/* Responsive */
+@media (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logo-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .logout-button {
+    align-self: flex-end;
+    margin-top: 10px;
+  }
+
+  #registerFormEmprendedor {
+    margin: 100px 20px 20px;
+    padding: 20px;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado con logo y título -->
+  <header>
+  <div class="header-container">
+    <div class="logo-title">
+      <img src="logo toy.jpg" alt="Logo AKITOY">
+      <h1>AKITOY te espera</h1>
+    </div>
+    <a href="index.html" class="logout-button">Cerrar sesión</a>
+  </div>
+</header>
+  <!-- Formulario de emprendedor -->
+  <div id="registerFormEmprendedor">
+    <h2>Registrate en AKITOY como comprador</h2>
+    <br>
+    <h3>Gracias por elegirnos</h3>
+    <!-- Cambié el method a POST y agregué action -->
+    <form id="formRegisterEmprendedor" enctype="multipart/form-data" action="#" method="post">
+      
+      <label for="nombreCompletoEmp">Nombre completo:</label>
+      <input type="text" id="nombreCompletoEmp" name="nombreCompletoEmp" required />
+
+      <label for="correoEmp">Correo electrónico:</label>
+      <input type="email" id="correoEmp" name="correoEmp" required />
+
+      <label for="contrasenaEmp">Contraseña:</label>
+      <input type="password" id="contrasenaEmp" name="contrasenaEmp" required minlength="6" />
+      
+      <label for="duiEmp">Número de DUI:</label>
+      <input type="text" id="duiEmp" name="duiEmp" pattern="\d{8}-\d" placeholder="Formato: 12345678-9" required />
+
+      <label for="departamentoEmp">Departamento:</label>
+      <select id="departamentoEmp" name="departamentoEmp" required>
+        <option value="">--Seleccione--</option>
+        <option value="Ahuachapán">Ahuachapán</option>
+        <option value="Santa Ana">Santa Ana</option>
+        <option value="Sonsonate">Sonsonate</option>
+        <option value="Chalatenango">Chalatenango</option>
+        <option value="La Libertad">La Libertad</option>
+        <option value="San Salvador">San Salvador</option>
+        <option value="Cuscatlán">Cuscatlán</option>
+        <option value="La Paz">La Paz</option>
+        <option value="Cabañas">Cabañas</option>
+        <option value="San Vicente">San Vicente</option>
+        <option value="Usulután">Usulután</option>
+        <option value="San Miguel">San Miguel</option>
+        <option value="Morazán">Morazán</option>
+        <option value="La Unión">La Unión</option>
+      </select>
+
+      <div id="registerEmpError" class="error"></div>
+
+      <button type="submit">Enviar</button>
+    </form>
+    
+    <div id="confirmMessage" class="confirm-message">Te has registrado de manera exitosa. ¡Bienvenido a AKITOY! Serás redirigido al inicio...</div>
+  </div>
+
+  <script type="module">
+    // Firebase v10.7.2 modular CDN
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+
+    // Config: fixed storageBucket
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXxkU2iaj6f1ApwsClP_chkHq3yrv0L4",
+      authDomain: "akitoy-f20ec.firebaseapp.com",
+      projectId: "akitoy-f20ec",
+      storageBucket: "akitoy-f20ec.appspot.com",
+      messagingSenderId: "89492565749",
+      appId: "1:89492565749:web:ebd51768253fabaffa1fbc",
+      measurementId: "G-4W6FLCV3N6"
+    };
+
+    // Init
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM
+    const form = document.getElementById('formRegisterEmprendedor');
+    const errorDisplay = document.getElementById('registerEmpError');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // Helpers
+    const setBusy = (busy) => {
+      submitButton.disabled = busy;
+      form.querySelectorAll('input, select').forEach(el => el.disabled = busy);
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorDisplay.textContent = '';
+      setBusy(true);
+
+      const nombreCompleto = document.getElementById('nombreCompletoEmp').value.trim();
+      const email = document.getElementById('correoEmp').value.trim().toLowerCase();
+      const password = document.getElementById('contrasenaEmp').value;
+      const dui = document.getElementById('duiEmp').value.trim();
+      const departamento = document.getElementById('departamentoEmp').value;
+
+      if (!nombreCompleto || !email || !password || !dui || !departamento) {
+        errorDisplay.textContent = "Completa todos los campos requeridos.";
+        setBusy(false);
+        return;
+      }
+
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = user.uid;
+
+        await setDoc(doc(db, "compradores", uid), {
+          nombre: nombreCompleto,
+          correo: email,
+          numerodui: dui,
+          departamento: departamento,
+          fechaRegistro: serverTimestamp()
+        });
+
+        confirmMessage.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = 'menuu.html';
+        }, 1800);
+      } catch (error) {
+        let errorMessage = "Error en el registro. Intenta de nuevo.";
+        if (error?.code === 'auth/weak-password') {
+          errorMessage = "La contraseña es demasiado débil. Mínimo 6 caracteres.";
+        } else if (error?.code === 'auth/email-already-in-use') {
+          errorMessage = "Este correo ya está registrado. Por favor, inicia sesión.";
+        } else if (error?.code === 'auth/invalid-email') {
+          errorMessage = "El formato del correo electrónico es inválido.";
+        }
+        errorDisplay.textContent = errorMessage;
+        console.error("Firebase error:", error?.code, error?.message);
+        setBusy(false);
+      }
+    });
+  </script>
+</body>
+</html>

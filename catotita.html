@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mapa Emprendimientos AKITOY</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tipografía global -->
+  <link rel="stylesheet" href="typography.css">
+
+  <style>
+    
+    
+    /* Navbar personalizado */
+.custom-navbar {
+    background: var(--blue-gradient);
+    padding: 12px 0;
+    border-bottom: 2px solid var(--blue);
+    transition: background 0.3s ease;
+}
+
+.custom-navbar .nav-link {
+    color: white !important;
+    margin-left: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.custom-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background: #ffffff;
+    left: 0;
+    bottom: -4px;
+    transition: width 0.3s;
+}
+
+.custom-navbar .nav-link:hover::after {
+    width: 100%;
+}
+
+.custom-navbar .logout-btn {
+    color: #ffffff !important;
+    font-weight: bold;
+}
+
+/* Logo con brillo */
+.logo-glow {
+    filter: drop-shadow(0 0 6px var(--blue));
+}
+
+    /* ====== PANTALLA DE CARGA ====== */
+  #loader {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #0a0a0a, #120033); /* negro profundo a rojo oscuro */
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  z-index: 9999;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+#topBannerPro{
+  position: fixed;
+  top:0; left:0;
+  width:100%;
+  overflow:hidden;
+  background: linear-gradient(90deg, #120033, #160066, #120033); /* rojo oscuro difuminado */
+  color:#fff;
+  font-weight:700;
+  z-index:9999;
+  padding: 8px 0;
+  text-align:left;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+/* Navbar fija arriba */
+.custom-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1040;
+}
+
+/* Ajustar el espacio del body solo por la navbar */
+body {
+  padding-top: 60px;
+}
+
+
+/* Removido ticker superior */
+  
+    #loader.hide { opacity:0; visibility:hidden; }
+    #loader img { width: 96px; height: 96px; filter: drop-shadow(0 0 12px rgb(18, 96, 204)); animation: pulse 1.6s infinite; }
+    #loader h2 { color:rgb(18, 96, 204); margin-top:14px; text-shadow: 0 0 10px rgb(18, 96, 204); font-weight:700; letter-spacing:.5px; }
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+
+    /* ====== GLOBAL ====== */
+    :root{
+      --bg:#FFFFFF;
+      --bg2:#FFFFFF;
+      --text:#1F2937;
+      --muted:#6B7280;
+      --blue:#0F3D91;
+      --blue-2:#0B3A7E;
+      --blue-3:#0F3D91;
+      --blue-gradient: linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%);
+      --glass: rgba(30, 103, 198, 0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; display:flex; flex-direction:column;
+      background-color: var(--bg);
+      color:var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    a{color:#ffdede}
+
+    h1{
+      margin:20px auto 16px; text-align:center; line-height:1.2;
+      color:var(--text); text-shadow:0 0 16px var(--bg);
+      letter-spacing:.5px; font-size: clamp(22px, 4vw, 34px);
+      opacity:0; animation: fadeInTitle 1s ease forwards .2s;
+      user-select:none;
+    }
+    @keyframes fadeInTitle{from{opacity:0; transform:translateY(-10px)} to{opacity:1; transform:translateY(0)}}
+
+    /* ====== CONTROLES ====== */
+    #controles{
+      max-width: 1100px; width: 94%;
+      margin: 0 auto 14px;
+      padding: 14px;
+      display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+      background: #ffffff; border-radius: 14px;
+      border:1px solid rgba(30,103,198,0.15);
+      box-shadow: 0 4px 18px rgba(30,103,198,0.12);
+      transition: box-shadow .3s ease;
+    }
+    #controles:hover{ box-shadow: 0 6px 24px rgba(30,103,198,0.25); }
+
+    select, button, input[type=search]{
+      padding: 10px 14px; font-size: 1rem;
+      border-radius: 10px; outline:none; min-width: 190px;
+      border: 1px solid rgba(30,103,198,0.35);
+      background:#ffffff; color:var(--text);
+      transition: transform .12s ease, box-shadow .25s ease, border-color .2s ease;
+    }
+    input::placeholder{color:#9CA3AF}
+    select:focus, input[type=search]:focus{
+      border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,103,198,0.25);
+    }
+    button{
+      cursor:pointer; font-weight:700; letter-spacing:.2px; min-width: 150px;
+      background: var(--blue);
+      color:#fff; border:none; box-shadow: 0 4px 14px rgba(30,103,198,0.25);
+    }
+    button:hover{ transform: translateY(-1px) scale(1.03); box-shadow:0 6px 22px rgba(30, 103, 198, 0.35); background: var(--blue-2); }
+    #favoritosBtn{ margin-left:auto }
+    #cancelarRutaBtn{ background:#160066; display:none }
+
+    /* ====== LAYOUT MAPA + PANEL ====== */
+    #mapaListaContainer{
+      display:flex; gap:16px; padding: 0 3%; flex: 1 1 auto; width:100%; box-sizing:border-box;
+    }
+    #mapa{
+      flex:3; height: 70vh; min-height: 420px; min-width:280px;
+      border-radius:14px; overflow:hidden;
+      box-shadow: 0 4px 18px rgba(30,103,198,0.12);
+      transition: box-shadow .3s;
+    }
+    #mapa:hover{ box-shadow: 0 6px 24px rgba(30,103,198,0.25); }
+
+    #listaNegociosContainer{
+      flex:1; display:flex; flex-direction:column; gap:10px;
+      max-height: 70vh;
+      background: #ffffff; border-radius:14px; padding:12px;
+      border:1px solid rgba(30,103,198,0.15); box-shadow: 0 4px 18px rgba(30,103,198,0.12);
+      overflow:hidden;
+    }
+    
+    #listaNegociosContainer h2{
+  margin:0; text-align:center; 
+  color:var(--text); text-shadow:0 0 16px var(--bg);
+  text-shadow:0 0 10px rgba(255,255,255,0.3); /* sombra sutil en blanco */
+  font-size: clamp(16px, 2.4vw, 22px);
+}
+
+    /* ====== CARRUSEL ====== */
+    #ofertasCarrusel{
+      position:relative; width:100%; height:100%;
+      border:2px solid var(--blue); border-radius:12px; overflow:hidden;
+      box-shadow:0 4px 18px rgba(30,103,198,0.12); background:#ffffff;
+    }
+    .carrusel2-track{ display:flex; height:100%; transition: transform .6s ease; }
+    .carrusel2-slide{ min-width:100%; height:100%;}
+    .carrusel2-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Botones más estéticos */
+
+
+
+.carrusel2-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background: rgba(0,0,0,0.3); /* semi-transparente */
+  color:#fff; border:none; font-size:1.2rem;
+  padding:2px 6px; border-radius:4px;
+  cursor:pointer; user-select:none;
+  z-index:10;
+  transition: all .2s ease;
+}
+.carrusel2-btn:hover{
+  background: rgba(53, 30, 255, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+.carrusel2-btn.prev{ left:2px; } 
+.carrusel2-btn.next{ right:2px; }
+
+    .carrusel2-indicadores{
+      position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
+      display:flex; gap:8px;
+    }
+    .carrusel2-indicador{
+      width:12px; height:12px; border-radius:50%;
+      background: var(--blue); opacity:.5; cursor:pointer; transition:all .25s;
+      box-shadow:0 0 6px rgba(30, 45, 255, 0.7);
+    }
+    .carrusel2-indicador.active{ opacity:1 }
+
+    /* ====== LISTADO ABAJO ====== */
+    #listadoAbajo{
+      max-width: 1100px; width: 94%;
+      margin: 16px auto 28px; padding: 12px;
+      background: #ffffff; border-radius:14px; border:1px solid rgba(30,103,198,0.15);
+      box-shadow:0 4px 18px rgba(30,103,198,0.12);
+    }
+    #listadoAbajo h2{ margin:4px 0 8px; text-align:center; color:var(--blue); text-shadow:none }
+    #listaNegocios{ list-style:none; margin:0; padding:0; }
+    #listaNegocios li{
+      padding: 10px 12px; border-bottom: 1px solid rgba(30,103,198,0.15);
+      cursor:pointer; transition: all .25s ease; color:var(--text);
+    }
+    #listaNegocios li:hover, #listaNegocios li.favorito{
+      background: rgba(30,103,198,0.08); transform: translateX(6px);
+      box-shadow: inset 3px 0 0 var(--blue);
+    }
+
+    /* ====== SCROLLBAR ====== */
+    ::-webkit-scrollbar{ width: 10px }
+    ::-webkit-scrollbar-track{ background:#f1f5f9 }
+    ::-webkit-scrollbar-thumb{ background: var(--blue); border-radius: 10px; box-shadow:0 0 10px var(--blue) }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 980px){
+      #mapaListaContainer{ flex-direction:column }
+      #listaNegociosContainer{ max-height: 40vh }
+      #mapa{ height: 50vh }
+    }
+/* ====== MODAL NEGOCIO CON EFECTO ZOOM DESDE PIN ====== */
+#modalNegocio {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 90%; max-width: 450px;
+  background: linear-gradient(145deg, #0d0a1a, #120033);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(0, 4, 255, 0.6);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10000;
+  transition: all 0.5s cubic-bezier(0.68,-0.55,0.27,1.55);
+}
+#modalNegocio.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+#modalNegocio h3 {
+  font-size: 1.8rem;
+  margin: 0 0 12px;
+  text-align: center;
+  color: #fff;
+}
+#modalNegocio button.cerrarModal {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgb(18, 96, 204), rgb(12, 66, 141));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+#modalNegocio button.cerrarModal:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px #4d40ff;
+}
+#modalNegocio .linksNegocio {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+#modalNegocio .linksNegocio a {
+  text-decoration: none;
+  color: #ffcccc;
+  background: rgba(0, 4, 255, 0.15);
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+#modalNegocio .linksNegocio a:hover {
+  background: rgba(45, 30, 255, 0.6);
+  color: #fff;
+}
+
+
+
+#modalFavoritoBtn {
+  background: rgba(4, 0, 255, 0.15);
+  color: #ffcccc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  color:#fffcfc;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+#modalFavoritoBtn:hover {
+  background: rgba(79, 30, 255, 0.6);
+  color: #fff;
+}
+
+
+
+    
+  </style>
+</head>
+<body>
+  
+
+<!-- BLOQUE STICKY -->
+<div class="sticky-top">
+
+    
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold text-white d-flex align-items-center" href="#">
+                <img src="logo toy.jpg" alt="Logo AKITOY" width="40" class="me-2 logo-glow">
+                <span class="brand-text">AKITOY</span>
+            </a>
+
+            <!-- Botón móvil -->
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto fw-semibold">
+                    <li class="nav-item"><a class="nav-link" href="menuu.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contactos.html">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link logout-btn" href="index.html">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+</div>
+<!-- FIN BLOQUE STICKY -->
+
+  
+  <!-- Loader -->
+  <div id="loader" aria-hidden="true">
+    <img src="logo toy.jpg" alt="Logo AKITOY">
+    <h2>AKITOY ¡Tu mejor opción!</h2>
+  </div>
+
+ 
+
+  <h1>Emprendimientos</h1>
+
+  <!-- CONTROLES -->
+  <div id="controles" role="region" aria-label="Controles del mapa">
+    <select id="filtroCategoria" aria-label="Filtrar por categoría">
+      <option value="todos" selected>Todas las categorías</option>
+      <option value="comida">Comida</option>
+      <option value="arte">Arte</option>
+      <option value="Belleza y Estilo">Belleza y Estilo</option>
+      
+    </select>
+
+    <select id="filtroDepartamento" aria-label="Filtrar por departamento">
+      <option value="todos" selected>Todos los distritos</option>
+      <option value="santa_ana">Santa Ana</option>
+      <option value="chalchuapa">Chalchuapa</option>
+      
+      
+    </select>
+
+    <input type="search" id="busquedaTexto" placeholder="Buscar por nombre..." aria-label="Buscar negocios por nombre" />
+    <button id="favoritosBtn" aria-pressed="false" aria-label="Mostrar solo favoritos">Favoritos</button>
+    <button id="cancelarRutaBtn" aria-label="Cancelar ruta">Cancelar ruta</button>
+  </div>
+
+  <!-- MAPA + PANEL DERECHO -->
+  <div id="mapaListaContainer">
+    <div id="mapa" role="application" aria-label="Mapa con ubicación y negocios"></div>
+
+    <aside id="listaNegociosContainer">
+      <h2>Ofertas y Noticias</h2>
+      <section id="ofertasCarrusel" aria-label="Carrusel de ofertas">
+        <div class="carrusel2-track" id="carrusel2Track">
+          <div class="carrusel2-slide"><img src="logo toy.jpg" alt="Oferta 1"></div>
+          <div class="carrusel2-slide"><img src="pupusasdos.jpg" alt="Oferta 2"></div>
+          <div class="carrusel2-slide"><img src="elsa.jpg" alt="Oferta 3"></div>
+          <div class="carrusel2-slide"><img src="roso.jpg" alt="Oferta 4 aleatoria"></div>
+        </div>
+        <button class="carrusel2-btn prev" id="c2Prev" aria-label="Anterior">❮</button>
+        <button class="carrusel2-btn next" id="c2Next" aria-label="Siguiente">❯</button>
+        <div class="carrusel2-indicadores" id="c2Dots"></div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- LISTA ABAJO -->
+  <section id="listadoAbajo" aria-label="Listado de negocios">
+    <h2>Listado de Negocios</h2>
+    <ul id="listaNegocios" tabindex="0" aria-live="polite" aria-atomic="true"></ul>
+  </section>
+  <div id="modalNegocio" aria-hidden="true">
+  <h3 id="modalNombre">Nombre del Negocio</h3>
+  <div class="linksNegocio">
+    <a href="#" target="_blank" id="modalProductos">Ver productos</a>
+    <a href="#" target="_blank" id="modalWhatsapp">WhatsApp</a>
+    <a href="#" id="modalRuta">¿Cómo llegar?</a>
+    <!-- ... DENTRO DEL MODAL (donde tienes los links) -->
+  <button id="modalFavoritoBtn">Añadir a favoritos</button>
+</div>
+<button class="cerrarModal">Cerrar</button>
+
+    
+  </div>
+
+
+
+  <!-- LIBRERÍAS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/locale/es.js"></script>
+
+<script>
+/* ====== QUITAR LOADER CUANDO CARGA ====== */
+window.addEventListener('load', () => {
+  setTimeout(()=> document.getElementById('loader').classList.add('hide'), 1200);
+});
+
+/* ====== CARRUSEL ====== */
+(function(){
+  const track = document.getElementById('carrusel2Track');
+  const slides = Array.from(track.children);
+  const prev = document.getElementById('c2Prev');
+  const next = document.getElementById('c2Next');
+  const dotsWrap = document.getElementById('c2Dots');
+  let i = 0, auto;
+
+  slides.forEach((_, idx) => {
+    const d = document.createElement('div');
+    d.className = 'carrusel2-indicador' + (idx===0 ? ' active' : '');
+    d.addEventListener('click', () => { i = idx; update(); restartAuto(); });
+    dotsWrap.appendChild(d);
+  });
+
+  function update(){
+    track.style.transform = `translateX(-${i*100}%)`;
+    [...dotsWrap.children].forEach((dot, idx)=> dot.classList.toggle('active', idx===i));
+  }
+  const nextSlide = () => { i = (i+1)%slides.length; update(); };
+  const prevSlide = () => { i = (i-1+slides.length)%slides.length; update(); };
+  const startAuto = () => auto = setInterval(nextSlide, 5000);
+  const stopAuto = () => clearInterval(auto);
+  const restartAuto = () => { stopAuto(); startAuto(); };
+
+  next.addEventListener('click', ()=>{ nextSlide(); restartAuto(); });
+  prev.addEventListener('click', ()=>{ prevSlide(); restartAuto(); });
+  track.addEventListener('mouseenter', stopAuto);
+  track.addEventListener('mouseleave', startAuto);
+
+  update(); startAuto();
+})();
+
+/* ====== MAPA Y LÓGICA ====== */
+const baseMaps = {
+  "Estándar": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }),
+  "Satelital": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '© Esri' }),
+};
+const mapa = L.map('mapa', { center:[13.7, -88.9], zoom:8, layers:[baseMaps["Estándar"]] });
+L.control.layers(baseMaps).addTo(mapa);
+
+const departamentos = {
+  "santa_ana": {center: [13.9946, -89.5597], zoom: 13},
+  "chalchuapa": {center: [13.9853934, -89.6803278260604], zoom: 13},
+ 
+};
+
+const emprendimientos = [
+  {id:1, nombre:"Pupusería Doña Ana", coords:[13.9946, -89.5597], categoria:"comida", departamento:"santa_ana", whatsapp:"+50361078739", url:"pupuseriaa.html"},
+  {id:2, nombre:"Salón de Belleza John 3:16 ", coords:[13.974860, -89.571450], categoria:"Belleza y Estilo", departamento:"santa_ana", whatsapp:"+50375328663", url:"Belleza.html"},
+  {id:4, nombre:"Flores eternas", coords:[13.978971, -89.672122], categoria:"arte", departamento:"chalchuapa", whatsapp:"+50368328901", url:"flores.html"},
+  {id:3, nombre:"Tienda de accesorios: Ying Yang", coords:[13.9948, -89.5697], categoria:"Belleza y Estilo", departamento:"santa_ana", whatsapp:"+50376759986", url:"Accesorios.html"},
+   {id:3, nombre:"Ramos Jazmin: arreglos", coords:[13.9905765, -89.6442747], categoria:"arte", departamento:"chalchuapa", whatsapp:"+50378793200", url:"Ramosjaz.html"},
+];
+
+let markers = [], marcadorUbicacion = null, miUbicacion = null, routingControl = null, destinoActual = null, destinoActualNombre = "", mostrarSoloFavoritos = false;
+
+function cargarFavoritos(){ const fav = localStorage.getItem('favoritosAKITOY'); return fav ? JSON.parse(fav) : []; }
+function guardarFavoritos(arr){ localStorage.setItem('favoritosAKITOY', JSON.stringify(arr)); }
+let favoritos = cargarFavoritos();
+
+function mostrarNegocios(categoria="todos", texto="", departamento="todos"){
+  markers.forEach(m => mapa.removeLayer(m)); markers = [];
+  const listaUL = document.getElementById("listaNegocios"); listaUL.innerHTML = "";
+  const textoLower = texto.toLowerCase();
+
+  const filtrados = emprendimientos.filter(e=>{
+    const catOK = (categoria==="todos") || (e.categoria===categoria);
+    const txtOK = e.nombre.toLowerCase().includes(textoLower);
+    const depOK = (departamento==="todos") || (e.departamento===departamento);
+    const favOK = mostrarSoloFavoritos ? favoritos.includes(e.id) : true;
+    return catOK && txtOK && depOK && favOK;
+  });
+
+  filtrados.forEach(e=>{
+    const marker = L.marker(e.coords).addTo(mapa).bindTooltip(e.nombre, {permanent:false, direction:"top"});
+    marker.on('click', ()=> mostrarModalZoom(e, marker));
+    markers.push(marker);
+
+    const li = document.createElement("li");
+    li.textContent = `${e.nombre} (${e.categoria})`;
+    if (favoritos.includes(e.id)) li.classList.add("favorito");
+    li.tabIndex = 0; li.setAttribute("role","button");
+    li.onclick = ()=>{ mapa.setView(e.coords, 15); mostrarModalZoom(e, marker); };
+    li.onkeydown = (ev)=>{ if(ev.key==="Enter"||ev.key===" "){ li.onclick(); ev.preventDefault(); } };
+    listaUL.appendChild(li);
+  });
+
+  if(filtrados.length===0) listaUL.innerHTML="<li>No se encontraron negocios con esos filtros.</li>";
+}
+
+function actualizarVista(){
+  const categoria = document.getElementById("filtroCategoria").value;
+  const texto = document.getElementById("busquedaTexto").value;
+  const departamento = document.getElementById("filtroDepartamento").value;
+  mostrarNegocios(categoria,texto,departamento);
+}
+
+document.getElementById("filtroCategoria").addEventListener("change", actualizarVista);
+document.getElementById("busquedaTexto").addEventListener("input", actualizarVista);
+document.getElementById("filtroDepartamento").addEventListener("change", e=>{
+  const dept = e.target.value;
+  if(dept!=="todos" && departamentos[dept]) mapa.setView(departamentos[dept].center, departamentos[dept].zoom);
+  else mapa.setView([13.7,-88.9],8);
+  actualizarVista();
+});
+document.getElementById("favoritosBtn").addEventListener("click", (e)=>{
+  mostrarSoloFavoritos = !mostrarSoloFavoritos;
+  e.target.setAttribute("aria-pressed", mostrarSoloFavoritos);
+  e.target.textContent = mostrarSoloFavoritos ? "Mostrar todos" : "Favoritos";
+  actualizarVista();
+});
+
+/* ====== UBICACION ====== */
+if(navigator.geolocation){
+  navigator.geolocation.watchPosition(
+    pos=>{
+      const latlng = [pos.coords.latitude,pos.coords.longitude];
+      miUbicacion = L.latLng(latlng);
+
+      if(!marcadorUbicacion){
+        const iconUrl='https://cdn-icons-png.flaticon.com/512/64/64113.png';
+        marcadorUbicacion = L.marker(latlng,{title:"Tu ubicación", icon:L.icon({iconUrl, iconSize:[32,32], iconAnchor:[16,32]})})
+          .addTo(mapa).bindTooltip("📍 Estás aquí").openTooltip();
+        mapa.setView(latlng,14);
+      } else marcadorUbicacion.setLatLng(latlng);
+
+      if(routingControl && destinoActual){
+        routingControl.setWaypoints([miUbicacion,destinoActual]);
+        const distancia = miUbicacion.distanceTo(destinoActual);
+        if(distancia<100) speak(`¡Estás cerca de tu destino! Pronto llegarás a ${destinoActualNombre}.`);
+      }
+    },
+    err=>console.warn("No se pudo obtener ubicación: "+err.message),
+    {enableHighAccuracy:true, maximumAge:0}
+  );
+} else { console.warn("Tu navegador no soporta geolocalización."); }
+
+/* ====== VOZ ====== */
+function speak(text){
+  if(!window.speechSynthesis) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang='es-ES';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+}
+
+/* ====== RUTA ====== */
+window.trazarRuta = function(destCoordsArray, nombblueestino){
+  if(!miUbicacion){ alert("❌ Esperando ubicación actual..."); return; }
+  destinoActual = L.latLng(destCoordsArray[0],destCoordsArray[1]);
+  destinoActualNombre = nombblueestino;
+
+  if(routingControl) mapa.removeControl(routingControl);
+  routingControl = L.Routing.control({
+    waypoints:[miUbicacion,destinoActual],
+    lineOptions: { styles:[{color:'blue', opacity:0.8, weight:6}] },
+    router: L.Routing.osrmv1({language:'es'}),
+    show: false,
+    addWaypoints:false,
+    draggableWaypoints:false
+  }).addTo(mapa);
+
+  document.getElementById("cancelarRutaBtn").style.display = "inline-block";
+  speak(`Ruta hacia ${nombblueestino} iniciada, te deseamos un lindo viaje, te esperamos.`);
+};
+
+document.getElementById("cancelarRutaBtn").addEventListener("click", ()=>{
+  if(routingControl){ 
+    mapa.removeControl(routingControl); 
+    routingControl = null; 
+  }
+  destinoActual = null;
+  window.speechSynthesis.cancel();
+  speak("Ruta cancelada, ¡Akitoy te desea feliz dia!"); 
+  document.getElementById("cancelarRutaBtn").style.display = "none";
+});
+
+
+/* ====== MODAL ====== */
+function mostrarModalZoom(e, marker){
+  const modal = document.getElementById("modalNegocio");
+  const favBtn = modal.querySelector("#modalFavoritoBtn");
+
+  modal.querySelector("#modalNombre").textContent = e.nombre;
+  modal.querySelector("#modalProductos").href = e.url;
+  modal.querySelector("#modalWhatsapp").href = "https://wa.me/"+e.whatsapp.replace(/\D/g,'');
+  modal.querySelector("#modalRuta").onclick = ()=>{
+    trazarRuta(e.coords, e.nombre);
+    modal.classList.remove("active");
+    return false;
+  };
+
+  // ✅ Mostrar estado actual del favorito
+  if(favoritos.includes(e.id)){
+    favBtn.textContent = " Quitar de favoritos";
+  } else {
+    favBtn.textContent = "Añadir a favoritos";
+  }
+
+  // ✅ Evento toggle favoritos
+  favBtn.onclick = ()=>{
+    if(favoritos.includes(e.id)){
+      favoritos = favoritos.filter(f=>f!==e.id);
+    } else {
+      favoritos.push(e.id);
+    }
+    guardarFavoritos(favoritos);
+    actualizarVista();
+
+    // actualizar botón dentro del modal
+    if(favoritos.includes(e.id)){
+      favBtn.textContent = "Quitar de favoritos";
+    } else {
+      favBtn.textContent = "Añadir a favoritos";
+    }
+  };
+
+  modal.classList.add("active");
+  mapa.setView(e.coords, 15);
+}
+
+
+document.querySelector("#modalNegocio .cerrarModal").addEventListener("click", ()=>{
+  document.getElementById("modalNegocio").classList.remove("active");
+});
+
+/* ====== INICIO ====== */
+actualizarVista();
+</script>
+
+
+</body>
+</html>

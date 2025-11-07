@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - Emprendedor</title>
+  <link rel="stylesheet" href="typography.css">
+  <style>
+/* Variables */
+:root{ --bg:#FFFFFF; --text:#1F2937; --primary:#0F3D91; --primary-700:#0B3A7E; --primary-gradient: linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%); }
+/* ===================== */
+/* Fondo general */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ===================== */
+/* Encabezado */
+header {
+  width: 100%;
+  padding: 12px 20px;
+  min-height: 60px;
+  background: var(--primary-gradient, linear-gradient(90deg, #0F3D91 0%, #1E67C6 50%, #66A6FF 100%));
+  border-bottom: 2px solid var(--primary);
+  box-shadow: 0 2px 8px rgba(30, 103, 198, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+/* Contenedor del contenido del header */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Logo + título */
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+header img {
+  width: 40px;
+}
+
+header h1 {
+  font-size: 20px;
+  margin: 0;
+  color: #fff;
+}
+
+/* Botón de Cerrar sesión */
+.logout-button {
+  background: transparent;
+  color: #fff;
+  padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: var(--primary-700);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(30,103,198,0.35);
+}
+
+/* ===================== */
+/* Contenedor del formulario */
+#loginFormEmprendedor {
+  background-color: #ffffff;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 40px 30px;
+  margin-top: 120px; /* espacio debajo del header */
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 4px 18px rgba(30,103,198,0.12);
+  text-align: center;
+}
+
+/* Título del formulario */
+#loginFormEmprendedor h2 {
+  margin-bottom: 25px;
+  font-size: 22px;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 8px;
+  display: inline-block;
+  color: var(--primary);
+}
+
+/* Labels */
+label {
+  display: block;
+  text-align: left;
+  margin: 12px 0 6px;
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--primary);
+}
+
+/* Campos de entrada */
+input {
+  width: 100%;
+  padding: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(30,103,198,0.35);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30,103,198,0.25);
+}
+
+/* Mensaje de error */
+.error {
+  color: var(--primary);
+  margin-top: 8px;
+  font-size: 13px;
+  text-align: left;
+}
+
+/* Botón del formulario */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+  background: var(--primary-700);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(30,103,198,0.35);
+}
+
+/* ===================== */
+/* Enlaces */
+p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #111;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--primary-700);
+}
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado con logo y título -->
+ <header>
+    <div class="header-container">
+      <div class="logo-title">
+        <img src="logo toy.jpg" alt="Logo AKITOY">
+        <h1>Bienvenido de nuevo a AKITOY</h1>
+      </div>
+      <a href="index.html" class="logout-button">Cerrar sesión</a>
+    </div>
+  </header>
+
+  <!-- Formulario de inicio de sesión -->
+  <div id="loginFormEmprendedor">
+    <h2>Iniciar sesión</h2>
+    <form id="formLoginEmprendedor" action="#" method="post">
+      
+      <label for="correoLogin">Correo electrónico:</label>
+      <input type="email" id="correoLogin" required />
+
+      <label for="contrasenaLogin">Contraseña:</label>
+      <input type="password" id="contrasenaLogin" required minlength="6" />
+
+      <div id="loginEmpError" class="error"></div>
+
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <p>¿No tienes cuenta? <a href="registro emprendedor.html">Regístrate aquí</a></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzXxkU2iaj6f1ApwsClP_chkHq3yrv0L4",
+      authDomain: "akitoy-f20ec.firebaseapp.com",
+      projectId: "akitoy-f20ec",
+      storageBucket: "akitoy-f20ec.appspot.com",
+      messagingSenderId: "89492565749",
+      appId: "1:89492565749:web:ebd51768253fabaffa1fbc",
+      measurementId: "G-4W6FLCV3N6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById('formLoginEmprendedor');
+    const emailInput = document.getElementById('correoLogin');
+    const passwordInput = document.getElementById('contrasenaLogin');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const errorBox = document.getElementById('loginEmpError');
+
+    const setBusy = (busy) => {
+      submitBtn.disabled = busy;
+      emailInput.disabled = busy;
+      passwordInput.disabled = busy;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.textContent = '';
+      setBusy(true);
+
+      const email = emailInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const uid = cred.user.uid;
+
+        // Verify the user exists in Firestore collection 'emprendedores'
+        const snap = await getDoc(doc(db, 'emprendedores', uid));
+        if (!snap.exists()) {
+          errorBox.textContent = 'Tu cuenta no está registrada como emprendedor.';
+          await signOut(auth);
+          setBusy(false);
+          return;
+        }
+
+        window.location.href = 'menuu.html';
+      } catch (error) {
+        let msg = 'No se pudo iniciar sesión.';
+        if (error?.code === 'auth/invalid-credential' || error?.code === 'auth/wrong-password') msg = 'Credenciales inválidas.';
+        if (error?.code === 'auth/user-not-found') msg = 'Usuario no encontrado.';
+        if (error?.code === 'auth/too-many-requests') msg = 'Demasiados intentos. Inténtalo más tarde.';
+        errorBox.textContent = msg;
+        console.error('Login emprendedor error:', error?.code, error?.message);
+        setBusy(false);
+      }
+    });
+  </script>
+
+</body>
+</html>
