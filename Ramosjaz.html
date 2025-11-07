@@ -145,6 +145,44 @@
   </div>
 </div>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCzXxkU2iaj6f1ApwsClP_chkHq3yrv0L4",
+    authDomain: "akitoy-f20ec.firebaseapp.com",
+    projectId: "akitoy-f20ec",
+    storageBucket: "akitoy-f20ec.appspot.com",
+    messagingSenderId: "89492565749",
+    appId: "1:89492565749:web:ebd51768253fabaffa1fbc",
+    measurementId: "G-4W6FLCV3N6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  window.compradorNombre = "";
+  window.compradorDui = "";
+  window.ensureCompradorLoaded = new Promise((resolve) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const snap = await getDoc(doc(db, "compradores", user.uid));
+          if (snap.exists()) {
+            const d = snap.data();
+            window.compradorNombre = d?.nombre || "";
+            window.compradorDui = d?.numerodui || "";
+          }
+        } catch (e) {}
+      }
+      resolve();
+    });
+  });
+</script>
+
 <script>
   let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
   actualizarCarrito();
@@ -186,18 +224,19 @@
     actualizarCarrito();
     alert("❌ Tu pedido ha sido cancelado.");
   }
-  function aceptarPedido(){
+  async function aceptarPedido(){
     if (carrito.length === 0) {
       alert("⚠ No hay productos en el carrito para enviar un pedido.");
       return;
     }
+    if (window.ensureCompradorLoaded) { await window.ensureCompradorLoaded; }
     let mensaje = "Hola, quiero realizar un pedido:\n\n";
     let total = 0;
     carrito.forEach(item => {
       mensaje += `- ${item.nombre} $${item.precio.toFixed(2)}\n`;
       total += item.precio;
     });
-    mensaje += `\nMonto a pagar: $${total.toFixed(2)}\n\nUsuario: \n\nDui: `;
+    mensaje += `\nMonto a pagar: $${total.toFixed(2)}\n\nUsuario: ${window.compradorNombre}\n\nDui: ${window.compradorDui}`;
     const numero = "50368328901";  
     const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
     window.open(url, "_blank");
